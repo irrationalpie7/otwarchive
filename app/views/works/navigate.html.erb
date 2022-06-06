@@ -2,7 +2,9 @@
 
 <ol class="chapter index group" role="navigation">
 <% for chapter in @chapters %>
-  <li><%= link_to chapter.display_title.html_safe, [chapter.work, chapter] %> <span class="datetime">(<%= chapter.published_at.to_date %>)</span></li>
+  <li><%= t("mailer.general.creation.link_with_word_count",
+      creation_link: link_to(chapter.display_title.html_safe, [chapter.work, chapter]),
+      word_count: t("mailer.general.creation.word_count", count: chapter.word_count).html_safe).html_safe %> <span class="datetime">(<%= chapter.published_at.to_date %>)</span></li>
 <% end %>
 </ol>
 
