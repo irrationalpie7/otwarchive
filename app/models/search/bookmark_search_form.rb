@@ -40,6 +40,10 @@ class BookmarkSearchForm
     :bookmarkable_complete,
     :collection_ids,
     :bookmarkable_collection_ids,
+    # TODO: verify that :word_count is needed
+    :word_count,
+    :words_from,
+    :words_to,
     :sort_column,
     :show_restricted,
     :page,
@@ -143,6 +147,7 @@ class BookmarkSearchForm
     [
       ['Date Bookmarked', 'created_at'],
       ['Date Updated', 'bookmarkable_date'],
+      ['Word Count', 'word_count'],
     ]
   end
 
