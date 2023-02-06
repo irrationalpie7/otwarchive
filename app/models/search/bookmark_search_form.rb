@@ -108,6 +108,9 @@ class BookmarkSearchForm
     if self.bookmarkable_type.present?
       summary << "Type: #{self.bookmarkable_type}"
     end
+    if self.word_count.present?
+      summary << "Word count: #{self.word_count}"
+    end
     if self.language_id.present?
       language = Language.find_by(short: self.language_id)
       if language.present?
@@ -162,7 +165,7 @@ class BookmarkSearchForm
   private
 
   def processed_options(opts = {})
-    [:date, :bookmarkable_date].each do |countable|
+    [:date, :bookmarkable_date, :word_count].each do |countable|
       if opts[countable].present?
         opts[countable] = opts[countable].gsub("&gt;", ">").
                                           gsub("&lt;", "<")
