@@ -176,6 +176,10 @@ class BookmarkQuery < Query
       tags_filter,
       named_tag_inclusion_filter,
       collections_filter,
+      # Technically word_count is a bookmarkable property, but since series may have
+      # different word counts depending on whether users can see archive-locked works,
+      # we hoist this so we can make the decision here which word_count we care about
+      word_count_filter,
       type_filter,
       date_filter
     ].flatten.compact
@@ -275,6 +279,23 @@ class BookmarkQuery < Query
 
   def collections_filter
     terms_filter(:collection_ids, options[:collection_ids]) if options[:collection_ids].present?
+  end
+
+  # This only checks :words_from and :words_to if :word_count isn't present
+  def word_count_filter
+    return unless options[:words_from].present? || options[:words_to].present? || options[:word_count].present?
+    if options[:word_count].present?
+      range = SearchRange.parsed(options[:word_count])
+    else
+      range = {}
+      range[:gte] = options[:words_from].delete(",._").to_i if options[:words_from].present?
+      range[:lte] = options[:words_to].delete(",._").to_i if options[:words_to].present?
+    end
+    if User.current_user.is_a?(User)
+      { range: { bookmarkable_word_count: range } }
+    else
+      { range: { bookmarkable_guest_word_count: range } }
+    end
   end
 
   def tag_exclusion_filter

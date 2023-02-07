@@ -40,7 +40,6 @@ class BookmarkSearchForm
     :bookmarkable_complete,
     :collection_ids,
     :bookmarkable_collection_ids,
-    # TODO: verify that :word_count is needed
     :word_count,
     :words_from,
     :words_to,
