@@ -34,4 +34,12 @@ describe BookmarkableQuery do
     q = BookmarkQuery.new(sort_column: 'word_count', sort_direction: 'asc').bookmarkable_query
     expect(q.generated_query[:sort]).to eq([{ word_count: { order: "asc" } }, { sort_id: { order: "asc" } }])
   end
+
+  it "allows a logged-in user to filter by total word count" do
+    user = User.new
+    user.id = 5
+    User.current_user = user
+    q = BookmarkQuery.new(word_count: '10').bookmarkable_query
+    expect(q.generated_query.dig(:query, :bool, :must, :has_child, :query, :bool, :filter)).to include({ range: { bookmarkable_word_count: { gte: 10, lte: 10 } } })
+  end
 end

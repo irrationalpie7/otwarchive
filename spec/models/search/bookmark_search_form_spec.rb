@@ -41,7 +41,7 @@ describe BookmarkSearchForm, bookmark_search: true do
           run_all_indexing_jobs
         end
 
-        it "sorts correctly when logged in" do
+        it "sorts bookmarkables correctly when logged in" do
           user = User.new
           user.id = 5
           User.current_user = user
@@ -49,7 +49,7 @@ describe BookmarkSearchForm, bookmark_search: true do
           expect(results.map(&:title)).to eq ["Series", "Ten"]
         end
 
-        it "sorts correctly when not logged in" do
+        it "sorts bookmarkables correctly when not logged in" do
           User.current_user = nil
           results = BookmarkSearchForm.new(parent: tag, sort_column: "word_count").bookmarkable_search_results 
           expect(results.map(&:title)).to eq ["Ten", "Series"]
@@ -201,20 +201,20 @@ describe BookmarkSearchForm, bookmark_search: true do
           run_all_indexing_jobs
         end
 
-        it "finds bookmarks with matching word counts" do
+        it "finds bookmarkables with matching word counts" do
           user = User.new
           user.id = 5
           User.current_user = user
           bookmark_search = BookmarkSearchForm.new(word_count: "10")
-          expect(bookmark_search.search_results).to include work_bookmark
+          expect(bookmark_search.bookmarkable_search_results).to include work_10
         end
 
-        it "excludes bookmarks without matching word counts" do
+        it "excludes bookmarkables without matching word counts" do
           user = User.new
           user.id = 5
           User.current_user = user
           bookmark_search = BookmarkSearchForm.new(word_count: "<10")
-          expect(bookmark_search.search_results).not_to include work_bookmark
+          expect(bookmark_search.bookmarkable_search_results).not_to include work_10
         end
 
         it "uses total series word count when logged in" do
@@ -222,18 +222,18 @@ describe BookmarkSearchForm, bookmark_search: true do
           user.id = 5
           User.current_user = user
           bookmark_search = BookmarkSearchForm.new(word_count: "15")
-          expect(bookmark_search.search_results).to include series_bookmark
+          expect(bookmark_search.bookmarkable_search_results).to include series
         end
 
         it "uses guest-visible series word count when not logged in" do
           User.current_user = nil
           bookmark_search = BookmarkSearchForm.new(word_count: "5")
-          expect(bookmark_search.search_results).to include series_bookmark
+          expect(bookmark_search.bookmarkable_search_results).to include series
         end
 
         it "excludes external works" do
           bookmark_search = BookmarkSearchForm.new(word_count: ">=0")
-          expect(bookmark_search.search_results).not_to include external_work_bookmark
+          expect(bookmark_search.bookmarkable_search_results).not_to include external_work
         end
       end
 
@@ -362,7 +362,7 @@ describe BookmarkSearchForm, bookmark_search: true do
   end
 
   describe "search_results" do
-    context "sorting by word count" do
+    context "when sorting or filtering by word count" do
       let(:tag) { create(:canonical_fandom) }
 
       let!(:work_5) { create(:work, fandom_string: tag.name) }
@@ -377,6 +377,9 @@ describe BookmarkSearchForm, bookmark_search: true do
       # series word_count is 5 or 15
       let!(:series_bookmark) { create(:bookmark, bookmarkable: series) }
 
+      let!(:external_work) { create(:external_work) }
+      let!(:external_work_bookmark) { create(:bookmark, bookmarkable: external_work) }
+
       before(:each) do
         work_5.chapters.first.update(content: "This word count is five.")
         work_5.save
@@ -390,7 +393,7 @@ describe BookmarkSearchForm, bookmark_search: true do
         run_all_indexing_jobs
       end
 
-      it "sorts correctly when logged in" do
+      it "sorts bookmarks correctly when logged in" do
         user = User.new
         user.id = 5
         User.current_user = user
@@ -398,10 +401,45 @@ describe BookmarkSearchForm, bookmark_search: true do
         expect(results.map(&:bookmarkable_type)).to eq ["Series", "Work"]
       end
 
-      it "sorts correctly when not logged in" do
+      it "sorts bookmarks correctly when not logged in" do
         User.current_user = nil
         results = BookmarkSearchForm.new(parent: tag, sort_column: "word_count").search_results
         expect(results.map(&:bookmarkable_type)).to eq ["Work", "Series"]
+      end
+
+      it "includes bookmarks with matching word counts" do
+        user = User.new
+        user.id = 5
+        User.current_user = user
+        bookmark_search = BookmarkSearchForm.new(word_count: "10")
+        expect(bookmark_search.search_results).to include work_bookmark
+      end
+
+      it "excludes bookmarks without matching word counts" do
+        user = User.new
+        user.id = 5
+        User.current_user = user
+        bookmark_search = BookmarkSearchForm.new(word_count: "<10")
+        expect(bookmark_search.search_results).not_to include work_bookmark
+      end
+
+      it "uses total series word count when logged in" do
+        user = User.new
+        user.id = 5
+        User.current_user = user
+        bookmark_search = BookmarkSearchForm.new(word_count: "15")
+        expect(bookmark_search.search_results).to include series_bookmark
+      end
+
+      it "uses guest-visible series word count when not logged in" do
+        User.current_user = nil
+        bookmark_search = BookmarkSearchForm.new(word_count: "5")
+        expect(bookmark_search.search_results).to include series_bookmark
+      end
+
+      it "excludes external works when filtering by word count" do
+        bookmark_search = BookmarkSearchForm.new(word_count: ">=0")
+        expect(bookmark_search.search_results).not_to include external_work_bookmark
       end
     end
 
