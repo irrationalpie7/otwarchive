@@ -99,6 +99,10 @@ class BookmarkableQuery < Query
   def sort
     if sort_column == "bookmarkable_date"
       sort_hash = { revised_at: { order: sort_direction, unmapped_type: "date" } }
+    elsif sort_column == "bookmarkable_word_count"
+      sort_hash = { word_count: { order: sort_direction } }
+    elsif sort_column == "bookmarkable_guest_word_count"
+      sort_hash = { guest_visible_word_count: { order: sort_direction } }
     else
       sort_hash = { _score: { order: sort_direction } }
     end
