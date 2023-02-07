@@ -50,4 +50,18 @@ describe BookmarkableQuery do
     expect(q.generated_query.dig(:query, :bool, :filter))
       .to include({ range: { word_count: { gte: 10, lte: 10 } } })
   end
+
+  it "allows a guest to filter by guest-visible word count ranges" do
+    User.current_user = nil
+    q = BookmarkQuery.new(words_from: "500", words_to: "1000").bookmarkable_query
+    expect(q.filters).to include({range: { guest_visible_word_count: { gte: 500, lte: 1000 } } })
+  end
+
+  it "allows a logged-in user to filter by total word count ranges" do
+    user = User.new
+    user.id = 5
+    User.current_user = user
+    q = BookmarkQuery.new(words_from: "500", words_to: "1000").bookmarkable_query
+    expect(q.filters).to include({range: { word_count: { gte: 500, lte: 1000 } } })
+  end
 end
