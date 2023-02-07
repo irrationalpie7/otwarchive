@@ -147,7 +147,7 @@ class BookmarkSearchForm
     [
       ["Date Bookmarked", "created_at"],
       ["Date Updated", "bookmarkable_date"],
-      ["Word Count", "word_count"],
+      ["Word Count", "word_count"]
     ]
   end
 
