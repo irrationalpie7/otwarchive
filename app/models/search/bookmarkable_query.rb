@@ -232,6 +232,7 @@ class BookmarkableQuery < Query
   # This only checks :words_from and :words_to if :word_count isn't present
   def word_count_filter
     return unless options[:words_from].present? || options[:words_to].present? || options[:word_count].present?
+
     if options[:word_count].present?
       range = SearchRange.parsed(options[:word_count])
     else
@@ -239,6 +240,7 @@ class BookmarkableQuery < Query
       range[:gte] = options[:words_from].delete(",._").to_i if options[:words_from].present?
       range[:lte] = options[:words_to].delete(",._").to_i if options[:words_to].present?
     end
+    
     if User.current_user.is_a?(User)
       { range: { word_count: range } }
     else

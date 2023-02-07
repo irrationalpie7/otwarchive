@@ -23,12 +23,12 @@ describe BookmarkSearchForm, bookmark_search: true do
         let!(:work_bookmark) { create(:bookmark, bookmarkable: work_10) }
 
         let!(:series) { create(:series, title: "Series") }
-        let!(:serial_work1) { create(:serial_work, series: series, work: work_5)}
-        let!(:serial_work2) { create(:serial_work, series: series, work: work_10r)}
+        let!(:serial_work1) { create(:serial_work, series: series, work: work_5) }
+        let!(:serial_work2) { create(:serial_work, series: series, work: work_10r) }
         # series "Series" word_count is 5 or 15
         let!(:series_bookmark) { create(:bookmark, bookmarkable: series) }
 
-        before(:each) do
+        before do
           work_5.chapters.first.update(content: "This word count is five.")
           work_5.save
 
@@ -46,13 +46,13 @@ describe BookmarkSearchForm, bookmark_search: true do
           user.id = 5
           User.current_user = user
           results = BookmarkSearchForm.new(parent: tag, sort_column: "word_count").bookmarkable_search_results
-          expect(results.map(&:title)).to eq ["Series", "Ten"]
+          expect(results.map(&:title)).to eq %w[Series Ten]
         end
 
         it "sorts bookmarkables correctly when not logged in" do
           User.current_user = nil
           results = BookmarkSearchForm.new(parent: tag, sort_column: "word_count").bookmarkable_search_results 
-          expect(results.map(&:title)).to eq ["Ten", "Series"]
+          expect(results.map(&:title)).to eq %w[Ten Series]
         end
       end
 
@@ -183,15 +183,15 @@ describe BookmarkSearchForm, bookmark_search: true do
         let!(:work_bookmark) { create(:bookmark, bookmarkable: work_10) }
 
         let!(:series) { create(:series) }
-        let!(:serial_work1) { create(:serial_work, series: series, work: work_5)}
-        let!(:serial_work2) { create(:serial_work, series: series, work: work_10)}
+        let!(:serial_work1) { create(:serial_work, series: series, work: work_5) }
+        let!(:serial_work2) { create(:serial_work, series: series, work: work_10) }
         # series word_count will be 5 or 15
         let!(:series_bookmark) { create(:bookmark, bookmarkable: series) }
 
         let!(:external_work) { create(:external_work) }
         let!(:external_work_bookmark) { create(:bookmark, bookmarkable: external_work) }
 
-        before(:each) do
+        before do
           work_5.chapters.first.update(content: "This word count is five.")
           work_5.save
 
@@ -372,15 +372,15 @@ describe BookmarkSearchForm, bookmark_search: true do
       let!(:work_bookmark) { create(:bookmark, bookmarkable: work_10) }
 
       let!(:series) { create(:series) }
-      let!(:serial_work1) { create(:serial_work, series: series, work: work_5)}
-      let!(:serial_work2) { create(:serial_work, series: series, work: work_10r)}
+      let!(:serial_work1) { create(:serial_work, series: series, work: work_5) }
+      let!(:serial_work2) { create(:serial_work, series: series, work: work_10r) }
       # series word_count is 5 or 15
       let!(:series_bookmark) { create(:bookmark, bookmarkable: series) }
 
       let!(:external_work) { create(:external_work) }
       let!(:external_work_bookmark) { create(:bookmark, bookmarkable: external_work) }
 
-      before(:each) do
+      before do
         work_5.chapters.first.update(content: "This word count is five.")
         work_5.save
 
@@ -398,13 +398,13 @@ describe BookmarkSearchForm, bookmark_search: true do
         user.id = 5
         User.current_user = user
         results = BookmarkSearchForm.new(parent: tag, sort_column: "word_count").search_results
-        expect(results.map(&:bookmarkable_type)).to eq ["Series", "Work"]
+        expect(results.map(&:bookmarkable_type)).to eq %w[Series Work]
       end
 
       it "sorts bookmarks correctly when not logged in" do
         User.current_user = nil
         results = BookmarkSearchForm.new(parent: tag, sort_column: "word_count").search_results
-        expect(results.map(&:bookmarkable_type)).to eq ["Work", "Series"]
+        expect(results.map(&:bookmarkable_type)).to eq %w[Work Series]
       end
 
       it "includes bookmarks with matching word counts" do

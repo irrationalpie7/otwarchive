@@ -214,9 +214,7 @@ class Bookmark < ApplicationRecord
   end
 
   def bookmarkable_word_count
-    if bookmarkable.respond_to?(:word_count)
-      bookmarkable.word_count
-    end
+    bookmarkable.word_count if bookmarkable.respond_to?(:word_count)
   end
 
   def bookmarkable_guest_word_count
