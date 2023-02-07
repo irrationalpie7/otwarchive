@@ -133,4 +133,46 @@ describe BookmarkQuery do
     q = BookmarkQuery.new(language_id: "ig")
     expect(q.filters).to include(has_parent: { parent_type: "bookmarkable", query: { term: { "language_id.keyword": "ig" } } })
   end
+
+  it "should allow a guest to filter by guest-visible word count" do
+    User.current_user = nil
+    q = BookmarkQuery.new(word_count: ">1000")
+    expect(q.filters).to include({range: { bookmarkable_guest_word_count: { gt: 1000 } } })
+  end
+
+  it "should allow a logged-in user to filter by total word count" do
+    user = User.new
+    user.id = 5
+    User.current_user = user
+    q = BookmarkQuery.new(word_count: ">1000")
+    expect(q.filters).to include({range: { bookmarkable_word_count: { gt: 1000 } } })
+  end
+
+  it "should allow a guest to filter by guest-visible word count ranges" do
+    User.current_user = nil
+    q = BookmarkQuery.new(words_from: "500", words_to: "1000")
+    expect(q.filters).to include({range: { bookmarkable_guest_word_count: { gte: 500, lte: 1000 } } })
+  end
+
+  it "should allow a logged-in user to filter by total word count ranges" do
+    user = User.new
+    user.id = 5
+    User.current_user = user
+    q = BookmarkQuery.new(words_from: "500", words_to: "1000")
+    expect(q.filters).to include({range: { bookmarkable_word_count: { gte: 500, lte: 1000 } } })
+  end
+
+  it "should allow a guest to sort by guest-visible word count" do
+    User.current_user = nil
+    q = BookmarkQuery.new(sort_column: 'word_count', sort_direction: 'asc')
+    expect(q.generated_query[:sort]).to eq([{ "bookmarkable_guest_word_count" => { order: "asc" } }, { id: { order: "asc" } }])
+  end
+
+  it "should allow a logged-in user to sort by total word count" do
+    user = User.new
+    user.id = 5
+    User.current_user = user
+    q = BookmarkQuery.new(sort_column: 'word_count', sort_direction: 'asc')
+    expect(q.generated_query[:sort]).to eq([{ "bookmarkable_word_count" => { order: "asc" } }, { id: { order: "asc" } }])
+  end
 end

@@ -13,6 +13,93 @@ describe BookmarkSearchForm, bookmark_search: true do
 
   describe "bookmarkable_search_results" do
     describe "sorting" do
+      context "by word count" do
+        let(:tag) { create(:canonical_fandom) }
+
+        let!(:work_5) { create(:work, title: "Five", word_count: 5, fandom_string: tag.name) }
+        let!(:work_10) { create(:work, title: "Ten", word_count: 10, fandom_string: tag.name) }
+        let!(:work_15) { create(:work, title: "Fifteen", word_count: 15,  fandom_string: tag.name, restricted: true) }
+        let!(:work_20) { create(:work, title: "Twenty", word_count: 20, fandom_string: tag.name) }
+
+        let!(:series) { create(:series) }
+        let!(:serial_work1) { create(:serial_work, series: series, work: work_5)}
+        let!(:serial_work2) { create(:serial_work, series: series, work: work_10)}
+        let!(:serial_work3) { create(:serial_work, series: series, work: work_15)}
+
+        # word count: 5
+        let!(:bookmark_5) { create(:bookmark, bookmarkable: work_5) }
+        # word count: 10
+        let!(:bookmark_10) { create(:bookmark, bookmarkable: work_10) }
+        # word count: 15, restricted
+        let!(:bookmark_15) { create(:bookmark, bookmarkable: work_15) }
+        # contains works 5, 10, and 15, so wordcount is either 30, or 15 if viewing as guest
+        let!(:series_bookmark) { create(:bookmark, bookmarkable: series) }
+        # word count: 20 (not in series)
+        let!(:bookmark_20) { create(:bookmark, bookmarkable: work_20) }
+
+        before(:each) do
+          work_5.chapters.first.update(content: "This word count is five.")
+          work_5.save
+
+          work_10.chapters.first.update(content: "This is a work with a word count of ten.")
+          work_10.save
+  
+          work_15.chapters.first.update(content: "This is a work with a word count of fifteen which is more than ten.")
+          work_15.save
+
+          work_20.chapters.first.update(content: "This is a work with a word count of twenty which is more than fifteen by five more wordsy words.")
+          work_20.save
+  
+          run_all_indexing_jobs
+        end
+
+        it "should find the right works less than a given number" do
+          bookmark_search = BookmarkSearchForm.new(word_count: "<13").search_results
+          expect(bookmark_search).to include bookmark_10
+          expect(bookmark_search).not_to include bookmark_20
+        end
+
+        it "should find the right works more than a given number" do
+          bookmark_search = BookmarkSearchForm.new(word_count: "> 13").search_results
+          expect(bookmark_search).not_to include bookmark_10
+          expect(bookmark_search).to include bookmark_20
+        end
+  
+        it "should find the right works within a range" do
+          bookmark_search = BookmarkSearchForm.new(word_count: "0-10").search_results
+          expect(bookmark_search).to include bookmark_10
+          expect(bookmark_search).not_to include bookmark_20
+        end
+
+        it "should find series using total series word count when logged in" do
+          user = User.new
+          user.id = 5
+          User.current_user = user
+          bookmark_search = BookmarkSearchForm.new(word_count: ">25")
+          expect(bookmark_search.search_results).to include series_bookmark
+        end
+
+        it "should exclude series using total series word count when logged in" do
+          user = User.new
+          user.id = 5
+          User.current_user = user
+          bookmark_search = BookmarkSearchForm.new(word_count: "<25")
+          expect(bookmark_search.search_results).not_to include series_bookmark
+        end
+
+        it "should find series using guest-visible series word count when not logged in" do
+          User.current_user = nil
+          bookmark_search = BookmarkSearchForm.new(word_count: "<25")
+          expect(bookmark_search.search_results).to include series_bookmark
+        end
+
+        it "should exclude series using guest-visible series word count when not logged in" do
+          User.current_user = nil
+          bookmark_search = BookmarkSearchForm.new(word_count: ">25")
+          expect(bookmark_search.search_results).not_to include series_bookmark
+        end
+      end
+
       context "when everything is created at a different time" do
         let(:tag) { create(:canonical_fandom) }
 
