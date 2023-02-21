@@ -213,6 +213,18 @@ describe HtmlCleaner do
           expect(result.to_s.squish).to eq('<div dir="rtl"> <p>This is RTL content</p> </div>')
         end
 
+        it "allows setting lang for p" do
+          html = '<p lang="en" xml:lang="de">This is English content</p>'
+          result = sanitize_value(field, html)
+          expect(result).to eq(html)
+        end
+
+        it "allows setting lang for div" do
+          html = '<div lang="de"><p>Wilkommen!</p></div>'
+          result = sanitize_value(field, html)
+          expect(result.to_s.squish).to eq(html)
+        end
+
         it "should not allow iframes with unknown source" do
           html = '<iframe src="http://www.evil.org"></iframe>'
           result = sanitize_value(field, html)
