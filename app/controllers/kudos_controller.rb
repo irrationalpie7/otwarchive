@@ -32,7 +32,7 @@ class KudosController < ApplicationController
       respond_to do |format|
         format.html do
           flash[:kudos_notice] = t(".success")
-          redirect_to request.referer and return
+          redirect_to "#{request.referer}#kudos_message" and return
         end
 
         format.js do
@@ -49,7 +49,7 @@ class KudosController < ApplicationController
           return if check_user_status
 
           flash[:kudos_error] = error_message
-          redirect_to request.referer and return
+          redirect_to "#{request.referer}#kudos_message" and return
         end
 
         format.js do
@@ -67,7 +67,7 @@ class KudosController < ApplicationController
     respond_to do |format|
       format.html do
         flash[:kudos_error] = error_message
-        redirect_to request.referer
+        redirect_to "#{request.referer}#kudos_message"
       end
 
       format.js do
