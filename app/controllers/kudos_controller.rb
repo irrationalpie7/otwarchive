@@ -67,7 +67,7 @@ class KudosController < ApplicationController
     respond_to do |format|
       format.html do
         flash[:kudos_error] = error_message
-        redirect_to request.referer and return
+        redirect_to request.referer
       end
 
       format.js do
