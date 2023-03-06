@@ -21,6 +21,8 @@ class WorksController < ApplicationController
 
   skip_before_action :store_location, only: [:share]
 
+  include WorksHelper
+
   # we want to extract the countable params from work_search and move them into their fields
   def clean_work_search_params
     QueryCleaner.new(work_search_params || {}).clean
@@ -205,7 +207,7 @@ class WorksController < ApplicationController
         )
       else
         flash.keep
-        query_params = Preference.normalize_work_query_params(params)
+        query_params = normalize_work_query_params(params)
         redirect_to([@work, @chapter, { only_path: true }.merge(query_params)]) && return
       end
     end

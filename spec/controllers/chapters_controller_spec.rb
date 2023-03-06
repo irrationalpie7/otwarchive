@@ -130,6 +130,18 @@ describe ChaptersController do
       it_redirects_to work_chapter_path(work_id: work.id, id: chapter.id)
     end
 
+    it "redirects to chapter with selected_id and style=disable" do
+      chapter = create(:chapter, work: work, position: 2)
+      get :show, params: { work_id: work.id, id: work.chapters.first, selected_id: chapter.id, style: "disable" }
+      it_redirects_to work_chapter_path(work_id: work.id, id: chapter.id, style: "disable")
+    end
+
+    it "redirects to chapter with selected_id and style=creator" do
+      chapter = create(:chapter, work: work, position: 2)
+      get :show, params: { work_id: work.id, id: work.chapters.first, selected_id: chapter.id, style: "creator" }
+      it_redirects_to work_chapter_path(work_id: work.id, id: chapter.id, style: "creator")
+    end
+
     it "errors and redirects to work if chapter is not found" do
       chapter = create(:chapter)
       get :show, params: { work_id: work.id, id: chapter.id }

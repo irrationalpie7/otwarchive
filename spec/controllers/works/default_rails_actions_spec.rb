@@ -281,6 +281,25 @@ describe WorksController, work_search: true do
 
       expect(assigns(:page_title)).to include "No fandom specified"
     end
+
+    context "chaptered work" do
+      let!(:chaptered_work) { create(:work, expected_number_of_chapters: 2) }
+
+      it "redirects to first chapter" do
+        get :show, params: { id: chaptered_work.id }
+        it_redirects_to work_chapter_path(work_id: chaptered_work.id, id: chaptered_work.chapters.first)
+      end
+
+      it "redirects to first chapter preserving style=disable" do
+        get :show, params: { id: chaptered_work.id, style: "disable" }
+        it_redirects_to work_chapter_path(work_id: chaptered_work.id, id: chaptered_work.chapters.first, style: "disable")
+      end
+
+      it "redirects to first chapter preserving style=creator" do
+        get :show, params: { id: chaptered_work.id, style: "creator" }
+        it_redirects_to work_chapter_path(work_id: chaptered_work.id, id: chaptered_work.chapters.first, style: "creator")
+      end
+    end
   end
 
   describe "share" do
