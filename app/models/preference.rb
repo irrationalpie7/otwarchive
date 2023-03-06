@@ -22,10 +22,6 @@ class Preference < ApplicationRecord
      return User.current_user.try(:preference).try(:disable_work_skins)
   end
 
-  def self.valid_style_param?(param)
-    return true if param == 'creator' || param == 'light' || param == 'disable'
-    return false
-
   def can_use_skin
     return if skin_id == AdminSetting.default_skin_id ||
               (skin.is_a?(Skin) && skin.approved_or_owned_by?(user))

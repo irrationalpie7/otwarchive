@@ -8,12 +8,14 @@
       <li><%= link_to '&#8593; '.html_safe + ts('Top'), "#main" %></li>
     <% end %>
 
+    <% query_params = normalize_work_query_params(params) %>
+
     <% if @work && @previous_chapter %>
-      <li><%= link_to '&#8592;'.html_safe + ts('Previous Chapter'), [@work, @previous_chapter, :anchor => "workskin"] %></li>
+      <li><%= link_to '&#8592;'.html_safe + ts('Previous Chapter'), [@work, @previous_chapter, :anchor => "workskin", :params => query_params] %></li>
     <% end %>
 
     <% if @work && @next_chapter %>
-      <li><%= link_to h(ts('Next Chapter')) + ' &#8594;'.html_safe, [@work, @next_chapter, :anchor => "workskin"] %></li>
+      <li><%= link_to h(ts('Next Chapter')) + ' &#8594;'.html_safe, [@work, @next_chapter, :anchor => "workskin", :params => query_params] %></li>
     <% end %>
 
     <% if @previous_admin_post %>

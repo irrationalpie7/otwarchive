@@ -205,7 +205,8 @@ class WorksController < ApplicationController
         )
       else
         flash.keep
-        redirect_to([@work, @chapter, { only_path: true }]) && return
+        query_params = Preference.normalize_work_query_params(params)
+        redirect_to([@work, @chapter, { only_path: true }.merge(query_params)]) && return
       end
     end
 

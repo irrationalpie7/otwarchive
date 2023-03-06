@@ -34,7 +34,8 @@ class ChaptersController < ApplicationController
     end
 
     if params[:selected_id]
-      redirect_to url_for(controller: :chapters, action: :show, work_id: @work.id, id: params[:selected_id]) and return
+      query_params = normalize_work_query_params(params)
+      redirect_to url_for({ controller: :chapters, action: :show, work_id: @work.id, id: params[:selected_id] }.merge(query_params)) and return
     end
     @chapters = @work.chapters_in_order(
       include_content: false,

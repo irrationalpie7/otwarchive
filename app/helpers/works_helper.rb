@@ -90,12 +90,17 @@ module WorksHelper
     link_to ts("Mark for Later"), mark_for_later_work_path(work)
   end
 
+  def normalize_work_query_params(params)
+    params.slice(:view_full_work, :style).permit(:view_full_work, :style)
+  end
+
   def get_endnotes_link
     if current_page?({ controller: "chapters", action: "show" })
+      query_params = normalize_work_query_params(params)
       if @work.posted?
-        chapter_path(@work.last_posted_chapter.id, anchor: 'work_endnotes')
+        chapter_path(@work.last_posted_chapter.id, anchor: "work_endnotes", params: query_params)
       else
-        chapter_path(@work.last_chapter.id, anchor: 'work_endnotes')
+        chapter_path(@work.last_chapter.id, anchor: "work_endnotes", params: query_params)
       end
     else
       "#work_endnotes"
@@ -103,9 +108,11 @@ module WorksHelper
   end
 
   def get_related_works_url
-    current_page?({ controller: "chapters", action: "show" }) ?
-      chapter_path(@work.last_posted_chapter.id, anchor: 'children') :
+    if current_page?({ controller: "chapters", action: "show" })
+      chapter_path(@work.last_posted_chapter.id, anchor: "children", params: normalize_work_query_params(params))
+    else
       "#children"
+    end
   end
 
   def get_inspired_by(work)
