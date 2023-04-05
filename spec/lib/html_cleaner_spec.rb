@@ -509,6 +509,36 @@ describe HtmlCleaner do
         result = sanitize_value(field, "<ruby>BigText<rt>small_text</rt></ruby>")
         expect(result).to include("<ruby>BigText<rt>small_text</rt></ruby>")
       end
+
+      it "transforms open attribute's value when present on details element in #{field}" do
+        html = <<~HTML
+          <details open="false">
+            <summary>Automated Status: Operational</summary>
+            <p>Velocity: 12m/s</p>
+            <p>Direction: North</p>
+          </details>
+        HTML
+
+        result = sanitize_value(field, html)
+        doc = Nokogiri::HTML.fragment(result)
+
+        expect(doc.xpath("./details/@open").to_s.strip).to eq("open")
+      end
+
+      it "does not require details to have an 'open' attribute in #{field}" do
+        html = <<~HTML
+          <details>
+            <summary>Automated Status: Operational</summary>
+            <p>Velocity: 12m/s</p>
+            <p>Direction: North</p>
+          </details>
+        HTML
+
+        result = sanitize_value(field, html)
+        doc = Nokogiri::HTML.fragment(result)
+
+        expect(doc.xpath("./details[@open]")).to be_empty
+      end
     end
   end
 
