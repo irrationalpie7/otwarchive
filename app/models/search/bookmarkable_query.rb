@@ -1,5 +1,5 @@
 class BookmarkableQuery < Query
-  RESTRICTABLE_FIELDS = Regexp.union(Tag::FILTERS.map(&:underscore) + %w[filter tags]).source
+  RESTRICTABLE_FIELDS = Regexp.union(Tag::FILTERS.map(&:underscore) + %w[filter tags word_count]).source
 
   include TaggableQuery
 
@@ -65,6 +65,7 @@ class BookmarkableQuery < Query
       language_filter,
       filter_id_filter,
       named_tag_inclusion_filter,
+      word_count_filter,
       date_filter
     )
   end
@@ -123,9 +124,9 @@ class BookmarkableQuery < Query
   ####################
 
   # When sorting by bookmarkable date, we use the revised_at field to order the
-  # results. When sorting by created_at, we use _score to sort (because the
-  # only way to sort by a child's fields is to store the value in the _score
-  # field and sort by score).
+  # results. When sorting by created_at or word_count, we use _score to sort
+  # (because the only way to sort by a child's fields is to store the value
+  # in the _score field and sort by score).
   def sort
     if sort_column == "bookmarkable_date"
       sort_hash = { revised_at: { order: sort_direction, unmapped_type: "date" } }
@@ -189,8 +190,15 @@ class BookmarkableQuery < Query
 
     # If we're sorting by created_at, we actually need to fetch the bookmarks'
     # created_at as the score of this query, so that we can sort by score (and
-    # therefore by the bookmarks' created_at).
+    # therefore by the bookmarks' created_at). Similarly for word_count.
     bool = field_value_score("created_at", bool) if sort_column == "created_at"
+    if sort_column == "word_count"
+      if include_restricted
+        bool = field_value_score("public_word_count", bool)
+      else
+        bool = field_value_score("general_word_count", bool)
+      end
+    end
 
     {
       has_child: {
@@ -219,6 +227,25 @@ class BookmarkableQuery < Query
   ####################
   # FILTERS
   ####################
+
+  # Ignores words_from and words_to if word_count is present
+  def word_count_filter
+    return unless options[:words_from].present? || options[:words_to].present? || options[:word_count].present?
+
+    if options[:word_count].present?
+      range = SearchRange.parsed(options[:word_count])
+    else
+      range = {}
+      range[:gte] = options[:words_from].delete(",._").to_i if options[:words_from].present?
+      range[:lte] = options[:words_to].delete(",._").to_i if options[:words_to].present?
+    end
+
+    if include_restricted?
+      { range: { general_word_count: range } }
+    else
+      { range: { public_visible_word_count: range } }
+    end
+  end
 
   def complete_filter
     term_filter(:complete, "true") if options[:complete].present?

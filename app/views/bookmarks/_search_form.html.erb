@@ -40,6 +40,13 @@
       <dd>
         <%= f.text_field :bookmarkable_date %>
       </dd>
+      <dt>
+        <%= f.label :word_count, ts("Word Count") %>
+        <%= link_to_help "bookmark-search-numerical-help" %>
+      </dt>
+      <dd>
+        <%= f.text_field :word_count %>
+      </dd>
     </dl>
   </fieldset>
 

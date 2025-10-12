@@ -40,6 +40,9 @@ class BookmarkSearchForm
     :bookmarkable_complete,
     :collection_ids,
     :bookmarkable_collection_ids,
+    :word_count,
+    :words_from,
+    :words_to,
     :sort_column,
     :show_restricted,
     :page,
@@ -104,6 +107,9 @@ class BookmarkSearchForm
     if self.bookmarkable_type.present?
       summary << "Type: #{self.bookmarkable_type}"
     end
+     if self.word_count.present?
+      summary << "Word count: #{self.word_count}"
+    end
     if self.language_id.present?
       language = Language.find_by(short: self.language_id)
       if language.present?
@@ -143,6 +149,7 @@ class BookmarkSearchForm
     [
       ['Date Bookmarked', 'created_at'],
       ['Date Updated', 'bookmarkable_date'],
+      ['Word Count', 'word_count']
     ]
   end
 
@@ -157,7 +164,7 @@ class BookmarkSearchForm
   private
 
   def processed_options(opts = {})
-    [:date, :bookmarkable_date].each do |countable|
+    [:date, :bookmarkable_date, :word_count].each do |countable|
       if opts[countable].present?
         opts[countable] = opts[countable].gsub("&gt;", ">").
                                           gsub("&lt;", "<")

@@ -122,10 +122,10 @@ class Series < ApplicationRecord
   def visible_word_count
     if User.current_user.nil?
       # visible_works_wordcount = self.works.posted.unrestricted.sum(:word_count)
-      visible_works_wordcount = self.works.posted.unrestricted.pluck(:word_count).compact.sum
+      visible_works_wordcount = self.public_word_count
     else
       # visible_works_wordcount = self.works.posted.sum(:word_count)
-      visible_works_wordcount = self.works.posted.pluck(:word_count).compact.sum
+      visible_works_wordcount = self.general_word_count
     end
     visible_works_wordcount
   end
@@ -229,10 +229,11 @@ class Series < ApplicationRecord
   ######################
 
   def bookmarkable_json
-    methods = %i[creators posted revised_at word_count work_types]
+    methods = %i[creators posted revised_at work_types]
     %w[general public].each do |visibility|
       methods << :"#{visibility}_tags"
       methods << :"#{visibility}_filter_ids"
+      methods << :"#{visibility}_word_count"
 
       Tag::FILTERS.map(&:underscore).each do |tag_type|
         methods << :"#{visibility}_#{tag_type}_ids"
@@ -262,6 +263,14 @@ class Series < ApplicationRecord
   end
 
   def word_count
+    self.works.posted.pluck(:word_count).compact.sum
+  end
+
+  def public_word_count
+    self.works.posted.unrestricted.pluck(:word_count).compact.sum
+  end
+
+  def general_word_count
     self.works.posted.pluck(:word_count).compact.sum
   end
 

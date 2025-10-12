@@ -18,6 +18,7 @@ describe BookmarkableQuery do
         expect(query.escape_restrictable_fields("general_tags:foo")).to eq("general_tags:foo")
       end
 
+      # FIXME: Do I need a similar set of tags for word_count?
       Tag::FILTERS.map(&:underscore).each do |tag_type|
         it "does not change 'general_#{tag_type}_ids'" do
           expect(query.escape_restrictable_fields("general_#{tag_type}_ids:foo")).to eq("general_#{tag_type}_ids:foo")
@@ -49,6 +50,7 @@ describe BookmarkableQuery do
         expect(query.escape_restrictable_fields("public_tags:foo")).to eq("public_tags:foo")
       end
 
+      # FIXME: Do I need a similar set of tags for word_count?
       Tag::FILTERS.map(&:underscore).each do |tag_type|
         it "does not change 'public_#{tag_type}_ids'" do
           expect(query.escape_restrictable_fields("public_#{tag_type}_ids:foo")).to eq("public_#{tag_type}_ids:foo")
@@ -109,6 +111,8 @@ describe BookmarkableQuery do
           User.current_user = create(:user)
         end
 
+        # FIXME: do I need to add word_count test for faceted query? what is a faceted query
+
         Tag::FILTERS.each do |type|
           it "includes #{type.underscore.humanize.downcase} aggregations" do
             expect(aggregations[type.underscore]).to \
@@ -166,6 +170,18 @@ describe BookmarkableQuery do
     context "when querying as a user" do
       before do
         User.current_user = create(:user)
+      end
+
+      # FIXME: add wordcount test
+      it "sorts by full word count" do
+        q = BookmarkQuery.new(sort_column: "word_count", sort_direction: "asc").bookmarkable_query
+        expect(q.generated_query[:sort]).to eq([{ word_count: { order: "asc" } }, { sort_id: { order: "asc" } }])
+      end
+
+      it "filters by total word count" do
+        q = BookmarkQuery.new(word_count: "10").bookmarkable_query
+        expect(q.generated_query.dig(:query, :bool, :filter))
+          .to include({ range: { word_count: { gte: 10, lte: 10 } } })
       end
 
       it "converts the 'tag' field to 'general_tags'" do
@@ -264,6 +280,20 @@ describe BookmarkableQuery do
     end
 
     context "when querying as a guest" do
+      # FIXME: fix word_count tests
+      it "sorts by word count" do
+        User.current_user = nil
+        q = BookmarkQuery.new(sort_column: "word_count", sort_direction: "asc").bookmarkable_query
+        expect(q.generated_query[:sort]).to eq([{ guest_visible_word_count: { order: "asc" } }, { sort_id: { order: "asc" } }])
+      end
+
+      it "filters by word count" do
+        User.current_user = nil
+        q = BookmarkQuery.new(word_count: "10").bookmarkable_query
+        expect(q.generated_query.dig(:query, :bool, :filter))
+          .to include({ range: { guest_visible_word_count: { gte: 10, lte: 10 } } })
+      end
+
       it "converts the 'tag' field to 'public_tags'" do
         bookmark_query = BookmarkQuery.new(bookmarkable_query: "tag:foo")
         q = bookmark_query.bookmarkable_query.generated_query
