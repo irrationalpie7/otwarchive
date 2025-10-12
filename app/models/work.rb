@@ -1220,7 +1220,9 @@ class Work < ApplicationRecord
       pseud_ids: anonymous? || unrevealed? ? nil : pseud_ids,
       user_ids: anonymous? || unrevealed? ? nil : user_ids,
       bookmarkable_type: "Work",
-      bookmarkable_join: { name: "bookmarkable" }
+      bookmarkable_join: { name: "bookmarkable" },
+      public_word_count: word_count,
+      general_word_count: word_count
     )
   end
 

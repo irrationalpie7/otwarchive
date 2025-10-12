@@ -13,6 +13,47 @@ describe BookmarkSearchForm, bookmark_search: true do
 
   describe "bookmarkable_search_results" do
     describe "sorting" do
+      context "by word count" do
+        let(:tag) { create(:canonical_fandom) }
+
+        let!(:work_5) { create(:work, fandom_string: tag.name) }
+        let!(:work_10r) { create(:work, fandom_string: tag.name, restricted: true) }
+        let!(:work_10) { create(:work, fandom_string: tag.name, title: "Ten") }
+        # work "Ten" has word_count 10
+        let!(:work_bookmark) { create(:bookmark, bookmarkable: work_10) }
+
+        let!(:series) { create(:series, title: "Series") }
+        let!(:serial_work1) { create(:serial_work, series: series, work: work_5) }
+        let!(:serial_work2) { create(:serial_work, series: series, work: work_10r) }
+        # series "Series" word_count is 5 or 15
+        let!(:series_bookmark) { create(:bookmark, bookmarkable: series) }
+
+        before do
+          work_5.chapters.first.update(content: "This word count is five.")
+          work_5.save
+
+          work_10.chapters.first.update(content: "This is a work with a word count of ten.")
+          work_10.save
+
+          work_10r.chapters.first.update(content: "This is a work with a word count of ten.")
+          work_10r.save
+
+          run_all_indexing_jobs
+        end
+
+        it "sorts bookmarkables correctly when logged in" do
+          User.current_user = create(:user)
+          results = BookmarkSearchForm.new(parent: tag, sort_column: "word_count").bookmarkable_search_results
+          expect(results.map(&:title)).to eq %w[Series Ten]
+        end
+
+        it "sorts bookmarkables correctly when not logged in" do
+          User.current_user = nil
+          results = BookmarkSearchForm.new(parent: tag, sort_column: "word_count").bookmarkable_search_results
+          expect(results.map(&:title)).to eq %w[Ten Series]
+        end
+      end
+
       context "when everything is created at a different time" do
         let(:tag) { create(:canonical_fandom) }
 

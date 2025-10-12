@@ -121,6 +121,16 @@ describe BookmarkQuery do
         expect(parent.dig(:has_parent, :query, :bool, :filter)).to \
           include({ term: { public_filter_ids: tag.id } })
       end
+
+      it "allows filtering by unrestricted word count" do
+        # FIXME add test
+      end
+
+      it "allows sorting by unrestricted word count" do
+        # FIXME add test
+        q = BookmarkQuery.new(sort_column: "word_count", sort_direction: "asc")
+        expect(q.generated_query[:sort]).to eq([{ "bookmarkable_word_count" => { order: "asc" } }, { id: { order: "asc" } }])
+      end
     end
 
     context "when querying as a admin" do
@@ -146,6 +156,16 @@ describe BookmarkQuery do
         parent = find_parent_filter(q.generated_query.dig(:query, :bool, :must))
         expect(parent.dig(:has_parent, :query, :bool, :filter)).to \
           include({ term: { general_filter_ids: tag.id } })
+      end
+
+      it "allows filtering by word count including restricted works" do
+        # FIXME add test
+      end
+
+      it "allows sorting by word count including restricted works" do
+        # FIXME add test
+        q = BookmarkQuery.new(sort_column: "word_count", sort_direction: "asc")
+        expect(q.generated_query[:sort]).to eq([{ "bookmarkable_guest_word_count" => { order: "asc" } }, { id: { order: "asc" } }])
       end
     end
 
