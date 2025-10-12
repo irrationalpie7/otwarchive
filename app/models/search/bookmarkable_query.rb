@@ -192,11 +192,9 @@ class BookmarkableQuery < Query
     # therefore by the bookmarks' created_at). Similarly for word_count.
     bool = field_value_score("created_at", bool) if sort_column == "created_at"
     if sort_column == "word_count"
-      if include_restricted
-        bool = field_value_score("public_word_count", bool)
-      else
-        bool = field_value_score("general_word_count", bool)
-      end
+      bool = include_restricted? ?
+        field_value_score("general_word_count", bool) :
+        field_value_score("public_word_count", bool)
     end
 
     {

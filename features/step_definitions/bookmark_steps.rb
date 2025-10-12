@@ -28,7 +28,7 @@ Given /^I have a bookmark of a deleted work$/ do
   step %{all indexing jobs have been run}
 end
 
-Given /^I have bookmarks with various word counts to search$/ do
+Given "I have bookmarks with various word counts to search" do
   # set up some works
   work5 = FactoryBot.create(:work, title: "Five")
   work10 = FactoryBot.create(:work, title: "Ten")

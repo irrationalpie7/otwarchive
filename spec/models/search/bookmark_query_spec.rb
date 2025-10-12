@@ -123,11 +123,11 @@ describe BookmarkQuery do
       end
 
       it "allows filtering by unrestricted word count" do
-        # FIXME add test
+        # FIXME: add test
       end
 
       it "allows sorting by unrestricted word count" do
-        # FIXME add test
+        # FIXME: add test
         q = BookmarkQuery.new(sort_column: "word_count", sort_direction: "asc")
         expect(q.generated_query[:sort]).to eq([{ "bookmarkable_word_count" => { order: "asc" } }, { id: { order: "asc" } }])
       end
@@ -159,11 +159,11 @@ describe BookmarkQuery do
       end
 
       it "allows filtering by word count including restricted works" do
-        # FIXME add test
+        # FIXME: add test
       end
 
       it "allows sorting by word count including restricted works" do
-        # FIXME add test
+        # FIXME: add test
         q = BookmarkQuery.new(sort_column: "word_count", sort_direction: "asc")
         expect(q.generated_query[:sort]).to eq([{ "bookmarkable_guest_word_count" => { order: "asc" } }, { id: { order: "asc" } }])
       end

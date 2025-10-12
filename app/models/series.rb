@@ -120,14 +120,7 @@ class Series < ApplicationRecord
   end
 
   def visible_word_count
-    if User.current_user.nil?
-      # visible_works_wordcount = self.works.posted.unrestricted.sum(:word_count)
-      visible_works_wordcount = self.public_word_count
-    else
-      # visible_works_wordcount = self.works.posted.sum(:word_count)
-      visible_works_wordcount = self.general_word_count
-    end
-    visible_works_wordcount
+    User.current_user.nil? ? self.public_word_count : self.general_word_count
   end
 
   def anonymous?

@@ -85,12 +85,12 @@
       </dt>
       <dd class="more group">
         <dl>
-          <dt id="toggle_work_words" class="filter-toggle words"><%= ts("Word Count") %></dt>
+          <dt id="toggle_work_words" class="filter-toggle words"><%= t(".filters.word_count") %></dt>
           <dd id="work_words" class="expandable">
             <dl class="range">
-              <dt><%= f.label :words_from, ts("From") %></dt>
+              <dt><%= f.label :words_from, t(".filters.from") %></dt>
               <dd><%= f.text_field :words_from %></dd>
-              <dt><%= f.label :words_to, ts("To") %></dt>
+              <dt><%= f.label :words_to, ts(".filters.to") %></dt>
               <dd><%= f.text_field :words_to %></dd>
             </dl>
           </dd>
