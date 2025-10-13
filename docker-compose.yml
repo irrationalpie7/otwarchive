@@ -32,7 +32,11 @@ services:
       - MYSQL_ROOT_PASSWORD=change_me
     ports:
       - "3306:3306"
-    command: [ "mysqld", "--sql-mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION" ]
+    command:
+      [
+        "mysqld",
+        "--sql-mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION",
+      ]
     volumes:
       - my-datavolume:/var/lib/mysql:rw
   redis:
