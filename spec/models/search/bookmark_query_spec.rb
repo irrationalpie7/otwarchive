@@ -123,13 +123,10 @@ describe BookmarkQuery do
       end
 
       it "allows filtering by unrestricted word count" do
-        # FIXME: add test
-      end
-
-      it "allows sorting by unrestricted word count" do
-        # FIXME: add test
-        q = BookmarkQuery.new(sort_column: "word_count", sort_direction: "asc")
-        expect(q.generated_query[:sort]).to eq([{ "bookmarkable_word_count" => { order: "asc" } }, { id: { order: "asc" } }])
+        q = BookmarkQuery.new(word_count:">10")
+        parent = find_parent_filter(q.generated_query.dig(:query, :bool, :must))
+        expect(parent.dig(:has_parent, :query, :bool, :filter)).to \
+          include({range: {public_word_count: {gt: 10}}})
       end
     end
 
@@ -159,13 +156,10 @@ describe BookmarkQuery do
       end
 
       it "allows filtering by word count including restricted works" do
-        # FIXME: add test
-      end
-
-      it "allows sorting by word count including restricted works" do
-        # FIXME: add test
-        q = BookmarkQuery.new(sort_column: "word_count", sort_direction: "asc")
-        expect(q.generated_query[:sort]).to eq([{ "bookmarkable_guest_word_count" => { order: "asc" } }, { id: { order: "asc" } }])
+        q = BookmarkQuery.new(word_count:"<10")
+        parent = find_parent_filter(q.generated_query.dig(:query, :bool, :must))
+        expect(parent.dig(:has_parent, :query, :bool, :filter)).to \
+          include({range: {general_word_count: {lt: 10}}})
       end
     end
 
@@ -174,6 +168,18 @@ describe BookmarkQuery do
       parent = find_parent_filter(q.generated_query.dig(:query, :bool, :must))
       expect(parent.dig(:has_parent, :query, :bool, :filter)).to \
         include({ term: { "language_id.keyword": "ig" } })
+    end
+  end
+
+  context "when sorting by properties of the bookmarkable" do
+    it "allows sorting by word count" do
+      q = BookmarkQuery.new(sort_column: "word_count")
+      expect(q.generated_query[:sort]).to eq([{"word_count" => {order: "desc"}}, {id: {order: "desc"}}])
+    end
+
+    it "allows sorting by bookmarkable date" do
+      q = BookmarkQuery.new(sort_column: "bookmarkable_date")
+      expect(q.generated_query[:sort]).to eq([{"bookmarkable_date" => {order: "desc", unmapped_type: "date"}}, {id: {order: "desc"}}])
     end
   end
 

@@ -32,6 +32,21 @@ class QueryCleaner
     params
   end
 
+  def clean_bookmarkable
+    return params if params[:bookmarkable_query].nil? || params[:bookmarkable_query].empty?
+    params[:query] = params[:bookmarkable_query]
+    unescape_angle_brackets
+    extract_countables(%w[word])
+    # Note that unlike `clean`, here we don't extract sort information from the query
+    add_quotes_to_categories
+    escape_angle_brackets
+    clean_up_query
+    params[:bookmarkable_query] = params[:query]
+    params.delete(:query)
+
+    params
+  end
+
   private
 
   def unescape_angle_brackets
@@ -43,8 +58,8 @@ class QueryCleaner
   end
 
   # extract countable params
-  def extract_countables
-    %w(word kudo comment bookmark hit).each do |term|
+  def extract_countables(countables = %w(word kudo comment bookmark hit))
+    countables.each do |term|
       count_regex = /#{term}s?\s*(?:\_?count)?\s*:?\s*((?:<|>|=|:)\s*\d+(?:\-\d+)?)/i
       m = params[:query].match(count_regex)
       next if m.nil?
