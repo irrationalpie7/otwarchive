@@ -74,6 +74,8 @@ Feature: Search Bookmarks
       And I should see "2 Found"
       And I should see "Five"
       And I should see "Ten"
+    When I follow "Edit Your Search"
+    Then the field labeled "Word Count" should contain "<15"
 
   Scenario: Search bookmarks by date updated
     Given I have bookmarks to search by dates

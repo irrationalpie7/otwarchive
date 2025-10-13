@@ -85,13 +85,6 @@
       </dt>
       <dd class="more group">
         <dl>
-          <dt class="words">
-            <%= f.label :word_count, t("bookmarks.filters.word_count") %>
-            <%= link_to_help "bookmark-search-numerical-help" %>
-          </dt>
-          <dd class="words">
-            <%= f.text_field :word_count %>
-          </dd>
           <dt class="search">
             <%= f.label :bookmarkable_query, ts("Search within results") %>
             <%= link_to_help "bookmark-search-text-help" %>
@@ -106,6 +99,14 @@
           </dt>
           <dd class="bookmarker search">
             <%= f.text_field :bookmark_query %>
+          </dd>
+
+          <dt class="words">
+            <%= f.label :word_count, t("bookmarks.filters.word_count") %>
+            <%= link_to_help "bookmark-search-numerical-help" %>
+          </dt>
+          <dd class="words">
+            <%= f.text_field :word_count %>
           </dd>
 
           <dt class="language">
