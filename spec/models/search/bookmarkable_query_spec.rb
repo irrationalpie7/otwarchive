@@ -170,8 +170,12 @@ describe BookmarkableQuery do
 
       it "sorts by full word count" do
         q = BookmarkQuery.new(sort_column: "word_count", sort_direction: "asc").bookmarkable_query
+        # Use general_word_count as the score
         expect(q.generated_query.dig(:query, :bool, :must, :has_child, :query, :function_score, :field_value_factor, :field))
           .to eq("general_word_count")
+        # Sort by score
+        expect(q.generated_query.dig(:sort))
+          .to eq([{_score: {order: "asc"}}, {sort_id: {order: "asc"}}])
       end
 
       it "filters by total word count" do
@@ -251,8 +255,12 @@ describe BookmarkableQuery do
       it "sorts by word count" do
         User.current_user = nil
         q = BookmarkQuery.new(sort_column: "word_count", sort_direction: "asc").bookmarkable_query
+        # Use public_word_count as the score
         expect(q.generated_query.dig(:query, :bool, :must, :has_child, :query, :function_score, :field_value_factor, :field))
           .to eq("public_word_count")
+        # Sort by score
+        expect(q.generated_query.dig(:sort))
+          .to eq([{_score: {order: "asc"}}, {sort_id: {order: "asc"}}])
       end
 
       it "filters by word count" do
