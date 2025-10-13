@@ -540,8 +540,6 @@ en:
       bookmarked_by_html: Bookmarked by %{pseud_link}
     filters:
       word_count: Word Count
-      from: From
-      to: To
     index:
       advanced_search: try our advanced search
       choose_fandom: choose a fandom

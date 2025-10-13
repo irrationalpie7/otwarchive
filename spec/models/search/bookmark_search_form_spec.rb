@@ -35,7 +35,7 @@ describe BookmarkSearchForm, bookmark_search: true do
         it "sorts bookmarkables correctly when logged in" do
           User.current_user = create(:user)
           results = BookmarkSearchForm.new(parent: tag, sort_column: "word_count").bookmarkable_search_results
-          expect(results.map(&:title)).to eq ["Series to be bookmarked" "Ten"]
+          expect(results.map(&:title)).to eq ["Series to be bookmarked", "Ten"]
         end
 
         it "sorts bookmarkables correctly when not logged in" do
