@@ -40,13 +40,15 @@ Feature: Filter bookmarks
       And I post the work "Restricted" as part of a series "Mixed Visibility"
       And I lock the work "Restricted"
       And I bookmark the series "Mixed Visibility"
-    When I go to my bookmarks
-      And I fill in "Word Count" with "<10"
+    When I go to awesome_posterrr's bookmarks page
+    Then I should see "Words: 12"
+    When I fill in "Word Count" with "<10"
       And I press "Sort and Filter"
     Then I should not see "Mixed Visibility"
     When I am logged out
-      And I go to awesome_posterrr's bookmarks
-      And I fill in "Word Count" with "<10"
+      And I go to awesome_posterrr's bookmarks page
+    Then I should see "Words: 6"
+    When I fill in "Word Count" with "<10"
       And I press "Sort and Filter"
     Then I should see "Mixed Visibility"
 
@@ -58,14 +60,18 @@ Feature: Filter bookmarks
       And I lock the work "Restricted"
       And I bookmark the series "Mixed Visibility"
       And I bookmark the work "In between"
-    When I go to my bookmarks
+    When I go to poster_child's bookmarks page
       And I select "Word Count" from "Sort by"
       And I press "Sort and Filter"
     Then the 1st bookmark result should contain "Mixed Visibility"
+      And the 1st bookmark result should contain "Words: 18"
       And the 2nd bookmark result should contain "In between"
+      And the 2nd bookmark result should contain "Words: 9"
     When I am logged out
-      And I go to poster_child's bookmarks
+      And I go to poster_child's bookmarks page
       And I select "Word Count" from "Sort by"
       And I press "Sort and Filter"
     Then the 1st bookmark result should contain "In between"
+      And the 1st bookmark result should contain "Words: 9"
       And the 2nd bookmark result should contain "Mixed Visibility"
+      And the 2nd bookmark result should contain "Words: 6"
