@@ -96,9 +96,9 @@ describe QueryCleaner do
     end
 
     it "should not extract hits from a query" do
-      cleaner = QueryCleaner.new(bookmarkable_query: "hit count > 50")
+      cleaner = QueryCleaner.new(bookmarkable_query: "hit count=50")
       clean_params = cleaner.clean_bookmarkable
-      expect(clean_params[:bookmarkable_query]).to eq("hit count > 50")
+      expect(clean_params[:bookmarkable_query]).to eq("hit count=50")
     end
 
     it "should put quotes around category tags" do
