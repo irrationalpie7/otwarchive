@@ -174,12 +174,12 @@ describe BookmarkQuery do
   context "when sorting by properties of the bookmarkable" do
     it "allows sorting by word count" do
       q = BookmarkQuery.new(sort_column: "word_count")
-      expect(q.generated_query[:sort]).to eq([{"word_count" => {order: "desc"}}, {id: {order: "desc"}}])
+      expect(q.generated_query[:sort]).to eq([{ "word_count" => { order: "desc" } }, { id: { order: "desc" } }])
     end
 
     it "allows sorting by bookmarkable date" do
       q = BookmarkQuery.new(sort_column: "bookmarkable_date")
-      expect(q.generated_query[:sort]).to eq([{"bookmarkable_date" => {order: "desc", unmapped_type: "date"}}, {id: {order: "desc"}}])
+      expect(q.generated_query[:sort]).to eq([{ "bookmarkable_date" => { order: "desc", unmapped_type: "date" } }, { id: { order: "desc" } }])
     end
   end
 
