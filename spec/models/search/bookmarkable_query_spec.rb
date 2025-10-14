@@ -175,7 +175,7 @@ describe BookmarkableQuery do
           .to eq("general_word_count")
         # Sort by score
         expect(q.generated_query.dig(:sort))
-          .to eq([{_score: {order: "asc"}}, {sort_id: {order: "asc"}}])
+          .to eq([{ _score: { order: "asc" } }, { sort_id: { order: "asc" } }])
       end
 
       it "filters by total word count" do
@@ -260,7 +260,7 @@ describe BookmarkableQuery do
           .to eq("public_word_count")
         # Sort by score
         expect(q.generated_query.dig(:sort))
-          .to eq([{_score: {order: "asc"}}, {sort_id: {order: "asc"}}])
+          .to eq([{ _score: { order: "asc" } }, { sort_id: { order: "asc" } }])
       end
 
       it "filters by word count" do
