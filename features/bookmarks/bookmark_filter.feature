@@ -40,6 +40,8 @@ Feature: Filter bookmarks
       And I post the work "Restricted" as part of a series "Mixed Visibility"
       And I lock the work "Restricted"
       And I bookmark the series "Mixed Visibility"
+      # FIXME does this fix the issue?
+      And all indexing jobs have been run
     When I go to awesome_posterrr's bookmarks page
     Then I should see "Words: 12"
     When I fill in "Word Count" with "<10"
@@ -60,6 +62,8 @@ Feature: Filter bookmarks
       And I lock the work "Restricted"
       And I bookmark the series "Mixed Visibility"
       And I bookmark the work "In between"
+      # FIXME: is this necessary?
+      And all indexing jobs have been run
     When I go to poster_child's bookmarks page
       And I select "Word Count" from "Sort by"
       And I press "Sort and Filter"
