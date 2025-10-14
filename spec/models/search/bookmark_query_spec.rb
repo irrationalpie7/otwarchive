@@ -123,10 +123,10 @@ describe BookmarkQuery do
       end
 
       it "allows filtering by unrestricted word count" do
-        q = BookmarkQuery.new(word_count:">10")
+        q = BookmarkQuery.new(word_count: ">10")
         parent = find_parent_filter(q.generated_query.dig(:query, :bool, :must))
         expect(parent.dig(:has_parent, :query, :bool, :filter)).to \
-          include({range: {public_word_count: {gt: 10}}})
+          include({ range: { public_word_count: { gt: 10 } } })
       end
     end
 
@@ -156,10 +156,10 @@ describe BookmarkQuery do
       end
 
       it "allows filtering by word count including restricted works" do
-        q = BookmarkQuery.new(word_count:"<10")
+        q = BookmarkQuery.new(word_count: "<10")
         parent = find_parent_filter(q.generated_query.dig(:query, :bool, :must))
         expect(parent.dig(:has_parent, :query, :bool, :filter)).to \
-          include({range: {general_word_count: {lt: 10}}})
+          include({ range: { general_word_count: { lt: 10 } } })
       end
     end
 

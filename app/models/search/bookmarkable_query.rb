@@ -227,9 +227,8 @@ class BookmarkableQuery < Query
   # FILTERS
   ####################
 
-  # Ignores words_from and words_to if word_count is present
   def word_count_filter
-    return unless options[:word_count].present?
+    return if options[:word_count].blank?
 
     range = SearchRange.parsed(options[:word_count])
 
