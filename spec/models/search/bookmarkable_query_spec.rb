@@ -174,7 +174,7 @@ describe BookmarkableQuery do
         expect(q.generated_query.dig(:query, :bool, :must, :has_child, :query, :function_score, :field_value_factor, :field))
           .to eq("general_word_count")
         # Sort by score
-        expect(q.generated_query.dig(:sort))
+        expect(q.generated_query[:sort])
           .to eq([{ _score: { order: "asc" } }, { sort_id: { order: "asc" } }])
       end
 
@@ -259,7 +259,7 @@ describe BookmarkableQuery do
         expect(q.generated_query.dig(:query, :bool, :must, :has_child, :query, :function_score, :field_value_factor, :field))
           .to eq("public_word_count")
         # Sort by score
-        expect(q.generated_query.dig(:sort))
+        expect(q.generated_query[:sort]))
           .to eq([{ _score: { order: "asc" } }, { sort_id: { order: "asc" } }])
       end
 
