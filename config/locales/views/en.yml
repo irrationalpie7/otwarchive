@@ -539,7 +539,7 @@ en:
     bookmark_user_module:
       bookmarked_by_html: Bookmarked by %{pseud_link}
     filters:
-      word_count: Word Count
+      word_count: Word count
       from: From
       to: To
     index:
