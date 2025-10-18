@@ -122,15 +122,21 @@ class BookmarkableQuery < Query
   # SORTING AND AGGREGATIONS
   ####################
 
-  # When sorting by bookmarkable date, we use the revised_at field to order the
-  # results. When sorting by created_at or word_count, we use _score to sort
-  # (because the only way to sort by a child's fields is to store the value
-  # in the _score field and sort by score).
   def sort
     if sort_column == "bookmarkable_date"
+      # This sort_column corresponds to the bookmarkable's revised_at date
       sort_hash = { revised_at: { order: sort_direction, unmapped_type: "date" } }
-    else
+    elsif sort_column == "created_at"
+      # When sorting by created_at, we use _score to sort (because the
+      # only way to sort by a child's fields is to store the value in
+      # the _score field and sort by score).
       sort_hash = { _score: { order: sort_direction } }
+    # We check the word_count cases last, as they are different depending on whether
+    # we include restricted works.
+    elsif include_restricted?
+      sort_hash = { general_word_count: { order: sort_direction } }
+    else
+      sort_hash = { public_word_count: { order: sort_direction } }
     end
 
     [sort_hash, { sort_id: { order: sort_direction } }]
@@ -189,15 +195,8 @@ class BookmarkableQuery < Query
 
     # If we're sorting by created_at, we actually need to fetch the bookmarks'
     # created_at as the score of this query, so that we can sort by score (and
-    # therefore by the bookmarks' created_at). Similarly for word_count.
+    # therefore by the bookmarks' created_at).
     bool = field_value_score("created_at", bool) if sort_column == "created_at"
-    if sort_column == "word_count"
-      bool = if include_restricted?
-               field_value_score("general_word_count", bool)
-             else
-               field_value_score("public_word_count", bool)
-             end
-    end
 
     {
       has_child: {

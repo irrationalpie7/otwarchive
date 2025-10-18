@@ -25,6 +25,7 @@ class BookmarkQuery < Query
   def filtered_query
     make_bool(
       # Score is based on our query + the bookmarkable query:
+      # FIXME: uhhh maybe not?
       must: make_list(queries, bookmarkable_queries_and_filters),
       filter: filters,
       must_not: make_list(exclusion_filters, bookmarkable_exclusion_filters)
@@ -124,9 +125,13 @@ class BookmarkQuery < Query
   end
 
   def sort
-    sort_hash = { sort_column => { order: sort_direction } }
+    sort_hash = if sort_column == 'word_count'
+                  { _score: { order: sort_direction } }
+                else
+                  { sort_column => { order: sort_direction } }
+                end
 
-    if %w(created_at bookmarkable_date).include?(sort_column)
+    if %w[created_at bookmarkable_date].include?(sort_column)
       sort_hash[sort_column][:unmapped_type] = 'date'
     end
 
