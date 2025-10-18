@@ -46,7 +46,7 @@ class BookmarksController < ApplicationController
 
   def search
     @languages = Language.default_order
-    options = params[:bookmark_search].present? ? clean_bookmark_search_params : {}
+    options = params[:bookmark_search].present? ? bookmark_search_params : {}
     options.merge!(page: params[:page]) if params[:page].present?
     options[:show_private] = false
     options[:show_restricted] = logged_in? || logged_in_as_admin?
@@ -74,7 +74,7 @@ class BookmarksController < ApplicationController
         page: params[:page]
       }
 
-      options = params[:bookmark_search].present? ? clean_bookmark_search_params : {}
+      options = params[:bookmark_search].present? ? bookmark_search_params : {}
 
       if params[:include_bookmark_search].present?
         params[:include_bookmark_search].keys.each do |key|
@@ -364,11 +364,6 @@ class BookmarksController < ApplicationController
       :url, :author, :title, :fandom_string, :rating_string, :relationship_string,
       :character_string, :summary, category_strings: []
     )
-  end
-
-  # we want to extract the word_count from bookmarkable_query and move it to word_count
-  def clean_bookmark_search_params
-    QueryCleaner.new(bookmark_search_params || {}).clean_bookmarkable
   end
 
   def bookmark_search_params

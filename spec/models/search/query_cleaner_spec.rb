@@ -73,48 +73,4 @@ describe QueryCleaner do
       expect(clean_params[:sort_direction]).to eq("asc")
     end
   end
-
-  describe "#clean_bookmarkable" do
-    it "should return a hash" do
-      q = { bookmarkable_query: "hello world" }
-      cleaner = QueryCleaner.new(q)
-      expect(cleaner.clean_bookmarkable).to eq(q)
-    end
-
-    it "should not error if there is no query" do
-      cleaner = QueryCleaner.new({})
-      expect(cleaner.clean_bookmarkable).to eq({})
-    end
-
-    it "should extract word count from a query" do
-      ["words=100", "wordcount:100", "word_count = 100"].each do |query|
-        cleaner = QueryCleaner.new(bookmarkable_query: query)
-        clean_params = cleaner.clean_bookmarkable
-        expect(clean_params[:bookmarkable_query]).to eq(nil)
-        expect(clean_params[:word_count]).to eq("100")
-      end
-    end
-
-    it "should not extract hits from a query" do
-      cleaner = QueryCleaner.new(bookmarkable_query: "hit count=50")
-      clean_params = cleaner.clean_bookmarkable
-      expect(clean_params[:bookmarkable_query]).to eq("hit count=50")
-    end
-
-    it "should put quotes around category tags" do
-      cleaner = QueryCleaner.new(bookmarkable_query: "Buffy F/F")
-      expect(cleaner.clean_bookmarkable[:bookmarkable_query]).to eq("Buffy \"f/f\"")
-    end
-
-    it "should not ID category tags that are part of larger words" do
-      cleaner = QueryCleaner.new(bookmarkable_query: "Jim/Frank")
-      expect(cleaner.clean[:bookmarkable_query]).to eq("Jim/Frank")
-    end
-
-    it "should not extract sorting options from a query" do
-      cleaner = QueryCleaner.new(bookmarkable_query: "sort by: hits ascending")
-      clean_params = cleaner.clean
-      expect(clean_params[:bookmarkable_query]).to eq("sort by: hits ascending")
-    end
-  end
 end
