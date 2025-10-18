@@ -379,6 +379,8 @@ class BookmarksController < ApplicationController
       :date,
       :bookmarkable_date,
       :word_count,
+      :words_from,
+      :words_to,
       :sort_column,
       :other_tag_names,
       :excluded_tag_names,

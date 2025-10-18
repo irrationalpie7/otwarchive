@@ -228,9 +228,15 @@ class BookmarkableQuery < Query
   ####################
 
   def word_count_filter
-    return if options[:word_count].blank?
+    return if options[:word_count].blank? && options[:words_from].blank? && options[:words_to].blank?
 
-    range = SearchRange.parsed(options[:word_count])
+    if options[:word_count].present?
+      range = SearchRange.parsed(options[:word_count])
+    else
+      range = {}
+      range[:gte] = options[:words_from].delete(",._").to_i if options[:words_from].present?
+      range[:lte] = options[:words_to].delete(",._").to_i if options[:words_to].present?
+    end
 
     if include_restricted?
       { range: { general_word_count: range } }

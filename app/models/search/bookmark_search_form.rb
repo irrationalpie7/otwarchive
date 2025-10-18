@@ -41,6 +41,8 @@ class BookmarkSearchForm
     :collection_ids,
     :bookmarkable_collection_ids,
     :word_count,
+    :words_from,
+    :words_to,
     :sort_column,
     :show_restricted,
     :page,
