@@ -226,6 +226,9 @@ class BookmarkableQuery < Query
   # FILTERS
   ####################
 
+  # Some search/filter pages allow users to specify word_count, others allow users
+  # to specify words_from and words_to. For the purpose of this filter, we assume that
+  # if word_count is specified, words_from and words_to will not be.
   def word_count_filter
     return if options[:word_count].blank? && options[:words_from].blank? && options[:words_to].blank?
 

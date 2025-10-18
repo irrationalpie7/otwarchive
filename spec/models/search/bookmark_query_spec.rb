@@ -130,7 +130,7 @@ describe BookmarkQuery do
       end
     end
 
-    context "when querying as a admin" do
+    context "when querying as an admin" do
       before do
         User.current_user = create(:admin)
       end
@@ -172,9 +172,25 @@ describe BookmarkQuery do
   end
 
   context "when sorting by properties of the bookmarkable" do
-    it "allows sorting by word count" do
+    it "allows sorting by public word count" do
       q = BookmarkQuery.new(sort_column: "word_count")
-      expect(q.generated_query[:sort]).to eq([{ "word_count" => { order: "desc" } }, { id: { order: "desc" } }])
+      # Sets sorting by score
+      expect(q.generated_query[:sort]).to eq([{ "_score" => { order: "desc" } }, { id: { order: "desc" } }])
+      # Computes score by word count
+      parent = find_parent_filter(q.generated_query.dig(:query, :bool, :must))
+      expect(parent.dig(:has_parent, :query, :function_score, :field_value_factor, :field)).to \
+          eq("public_word_count")
+    end
+
+    it "allows sorting by general word count when logged in" do
+      User.current_user = create(:user)
+      q = BookmarkQuery.new(sort_column: "word_count")
+      # Sets sorting by score
+      expect(q.generated_query[:sort]).to eq([{ "_score" => { order: "desc" } }, { id: { order: "desc" } }])
+      # Computes score by word count
+      parent = find_parent_filter(q.generated_query.dig(:query, :bool, :must))
+      expect(parent.dig(:has_parent, :query, :function_score, :field_value_factor, :field)).to \
+          eq("public_word_count")
     end
 
     it "allows sorting by bookmarkable date" do
