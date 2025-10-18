@@ -133,6 +133,8 @@ class BookmarkQuery < Query
   end
 
   def sort
+    # Word count is only defined for the parent bookmarkable, so in order to sort by
+    # it, we set the score to be the bookmarkable's word_count, and then sort by score
     sort_hash = if sort_column == 'word_count'
                   { _score: { order: sort_direction } }
                 else
