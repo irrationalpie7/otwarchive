@@ -67,7 +67,7 @@ Feature: Search Bookmarks
 
   Scenario: Search bookmarks by word count
     Given I have bookmarks with various word counts to search
-    When I fill in "Word Count" with "<15"
+    When I fill in "Word count" with "<15"
       And I press "Search Bookmarks"
     Then I should see the page title "Search Bookmarks"
       And I should see "You searched for: Word count: <15"
@@ -75,7 +75,7 @@ Feature: Search Bookmarks
       And I should see "Five"
       And I should see "Ten"
     When I follow "Edit Your Search"
-    Then the field labeled "Word Count" should contain "<15"
+    Then the field labeled "Word count" should contain "<15"
 
   Scenario: Search bookmarks by date updated
     Given I have bookmarks to search by dates

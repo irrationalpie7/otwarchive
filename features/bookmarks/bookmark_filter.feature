@@ -40,17 +40,20 @@ Feature: Filter bookmarks
       And I post the work "Restricted" as part of a series "Mixed Visibility"
       And I lock the work "Restricted"
       And I bookmark the series "Mixed Visibility"
-      # FIXME does this fix the issue?
-      And all indexing jobs have been run
     When I go to awesome_posterrr's bookmarks page
     Then I should see "Words: 12"
-    When I fill in "Word Count" with "<10"
+    When I press "Word count"
+      And I fill in "To" with "10"
       And I press "Sort and Filter"
     Then I should not see "Mixed Visibility"
+    When I fill in "To" with "20"
+      And I fill in "From" with "5"
+      And I press "Sort and Filter"
+    Then I should see "Mixed Visibility"
     When I am logged out
       And I go to awesome_posterrr's bookmarks page
     Then I should see "Words: 6"
-    When I fill in "Word Count" with "<10"
+    When I fill in "To" with "10"
       And I press "Sort and Filter"
     Then I should see "Mixed Visibility"
 
