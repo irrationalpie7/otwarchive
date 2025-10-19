@@ -175,7 +175,7 @@ describe BookmarkQuery do
     it "allows sorting by public word count" do
       q = BookmarkQuery.new(sort_column: "word_count")
       # Sets sorting by score
-      expect(q.generated_query[:sort]).to eq([{ "_score" => { order: "desc" } }, { id: { order: "desc" } }])
+      expect(q.generated_query[:sort]).to eq([{ _score: { order: "desc" } }, { id: { order: "desc" } }])
       # Computes score by word count
       parent = find_parent_filter(q.generated_query.dig(:query, :bool, :must))
       expect(parent.dig(:has_parent, :query, :function_score, :field_value_factor, :field)).to \
@@ -186,7 +186,7 @@ describe BookmarkQuery do
       User.current_user = create(:user)
       q = BookmarkQuery.new(sort_column: "word_count")
       # Sets sorting by score
-      expect(q.generated_query[:sort]).to eq([{ "_score" => { order: "desc" } }, { id: { order: "desc" } }])
+      expect(q.generated_query[:sort]).to eq([{ _score: { order: "desc" } }, { id: { order: "desc" } }])
       # Computes score by word count
       parent = find_parent_filter(q.generated_query.dig(:query, :bool, :must))
       expect(parent.dig(:has_parent, :query, :function_score, :field_value_factor, :field)).to \

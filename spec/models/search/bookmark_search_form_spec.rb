@@ -35,13 +35,20 @@ describe BookmarkSearchForm, bookmark_search: true do
         it "sorts bookmarkables correctly when logged in" do
           User.current_user = create(:user)
           results = BookmarkSearchForm.new(parent: tag, sort_column: "word_count").bookmarkable_search_results
+          # "Series to be bookmarked": 15, "Ten": 10
           expect(results.map(&:title)).to eq ["Series to be bookmarked", "Ten"]
         end
 
         it "sorts bookmarkables correctly when not logged in" do
           User.current_user = nil
           results = BookmarkSearchForm.new(parent: tag, sort_column: "word_count").bookmarkable_search_results
+          # "Ten": 10, "Series to be bookmarked": 5
           expect(results.map(&:title)).to eq ["Ten", "Series to be bookmarked"]
+        end
+
+        # FIXME: looks like having a test like this might make sense?
+        it "changes when the work wordcount changes" do
+          # TODO: add this test case
         end
       end
 
