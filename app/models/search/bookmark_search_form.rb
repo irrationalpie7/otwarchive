@@ -47,7 +47,7 @@ class BookmarkSearchForm
     :show_restricted,
     :page,
     :faceted
-  ]
+  ].freeze
 
   attr_accessor :options
 
