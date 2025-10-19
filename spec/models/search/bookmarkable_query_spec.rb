@@ -253,7 +253,7 @@ describe BookmarkableQuery do
         User.current_user = nil
         q = BookmarkQuery.new(sort_column: "word_count").bookmarkable_query
         # Sort by public_word_count
-        expect(q.generated_query[:sort]))
+        expect(q.generated_query[:sort])
           .to eq([{ public_word_count: { order: "desc" } }, { sort_id: { order: "desc" } }])
       end
 

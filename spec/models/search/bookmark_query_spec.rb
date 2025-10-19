@@ -179,7 +179,7 @@ describe BookmarkQuery do
       # Computes score by word count
       parent = find_parent_filter(q.generated_query.dig(:query, :bool, :must))
       expect(parent.dig(:has_parent, :query, :function_score, :field_value_factor, :field)).to \
-          eq("public_word_count")
+        eq("public_word_count")
     end
 
     it "allows sorting by general word count when logged in" do
@@ -190,7 +190,7 @@ describe BookmarkQuery do
       # Computes score by word count
       parent = find_parent_filter(q.generated_query.dig(:query, :bool, :must))
       expect(parent.dig(:has_parent, :query, :function_score, :field_value_factor, :field)).to \
-          eq("public_word_count")
+        eq("public_word_count")
     end
 
     it "allows sorting by bookmarkable date" do

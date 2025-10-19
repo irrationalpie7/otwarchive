@@ -135,13 +135,13 @@ class BookmarkQuery < Query
   def sort
     # Word count is only defined for the parent bookmarkable, so in order to sort by
     # it, we set the score to be the bookmarkable's word_count, and then sort by score
-    sort_hash = if sort_column == 'word_count'
+    sort_hash = if sort_column == "word_count"
                   { _score: { order: sort_direction } }
                 else
                   { sort_column => { order: sort_direction } }
                 end
 
-    if %w[created_at bookmarkable_date].include?(sort_column)
+    if %w(created_at bookmarkable_date).include?(sort_column)
       sort_hash[sort_column][:unmapped_type] = 'date'
     end
 
