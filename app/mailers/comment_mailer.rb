@@ -14,6 +14,22 @@ class CommentMailer < ApplicationMailer
     )
   end
 
+    # Sends email to an owner of the top-level commentable when a new comment is created as a reply
+  # This may be an admin, in which case we use the admin address instead
+  def comment_other_reply_notification(user, comment)
+    @comment = comment
+    @parent_comment = comment.commentable
+    @owner = true
+    email = user.is_a?(Admin) ? ArchiveConfig.ADMIN_ADDRESS : user.email
+    mail(
+      to: email,
+      # i18n-tasks-use t("comment_mailer.comment_other_reply_notification.subject.chapter")
+      # i18n-tasks-use t("comment_mailer.comment_other_reply_notification.subject.other")
+      # i18n-tasks-use t("comment_mailer.comment_other_reply_notification.subject.tag")
+      subject: subject_for_commentable(@comment)
+    )
+  end
+
   # Sends email to an owner of the top-level commentable when a comment is edited
   # This may be an admin, in which case we use the admin address instead
   def edited_comment_notification(user, comment)
@@ -25,6 +41,22 @@ class CommentMailer < ApplicationMailer
       # i18n-tasks-use t("comment_mailer.edited_comment_notification.subject.chapter")
       # i18n-tasks-use t("comment_mailer.edited_comment_notification.subject.other")
       # i18n-tasks-use t("comment_mailer.edited_comment_notification.subject.tag")
+      subject: subject_for_commentable(@comment)
+    )
+  end
+
+  # Sends email to an owner of the top-level commentable when a reply comment is edited
+  # This may be an admin, in which case we use the admin address instead
+  def edited_comment_other_reply_notification(user, comment)
+    @comment = comment
+    @parent_comment = comment.commentable
+    @owner = true
+    email = user.is_a?(Admin) ? ArchiveConfig.ADMIN_ADDRESS : user.email
+    mail(
+      to: email,
+      # i18n-tasks-use t("comment_mailer.edited_comment_other_reply_notification.subject.chapter")
+      # i18n-tasks-use t("comment_mailer.edited_comment_other_reply_notification.subject.other")
+      # i18n-tasks-use t("comment_mailer.edited_comment_other_reply_notification.subject.tag")
       subject: subject_for_commentable(@comment)
     )
   end
